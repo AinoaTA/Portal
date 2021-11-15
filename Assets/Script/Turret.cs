@@ -2,9 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Turret : LaserController
+public class Turret : LaserController, IDeath
 {
     public float m_DotAlife = 0.7f;
+
+    public void Death()
+    {
+        gameObject.SetActive(false);
+    }
 
     private void Update()
     {

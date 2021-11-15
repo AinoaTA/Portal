@@ -24,6 +24,8 @@ public class Portal : MonoBehaviour
     [SerializeField] private float m_MaxValidDistance = 0.1f;
     public LayerMask m_LayerMask;
 
+    public GameObject Renderer;
+
     private void Update()
     {
         Vector3 l_LocalPosition = m_OtherPortalTransform.InverseTransformPoint(m_Player.m_Camera.transform.position);

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDeath
 {
     private float m_Yaw;
     private float m_Pitch;
@@ -44,8 +44,6 @@ public class PlayerController : MonoBehaviour
     public Transform m_AttachPosition;
     public float m_AttachObjectTime = 1f;
     private float m_CurrentAttachObjectTime = 0f;
-    private float smooth =19f;
-    private float smoothRot = 5f;
 
     private float m_DetachForce = 550f;
 
@@ -53,9 +51,15 @@ public class PlayerController : MonoBehaviour
 
     public Portal BluePortal;
     public Portal OrangePortal;
+    private Portal currentPortal;
     private Vector3 PortalPos;
     private Quaternion PortalRot;
 
+    private Vector3 nextPos;
+    private Vector3 nextRot;
+    private bool Spawn=false;
+    private float sizeScale;
+    private float localScalePortals = 1;
     void Awake()
     {
         m_Yaw = transform.rotation.eulerAngles.y;
@@ -72,33 +76,73 @@ public class PlayerController : MonoBehaviour
     {
         PlayerCamera();
         PlayerMovement();
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            PortalPos = BluePortal.transform.position;
-            PortalRot = BluePortal.transform.rotation;
-            ShootPortal(BluePortal);
-        }else if(Input.GetMouseButtonDown(1))
-        {
-            PortalPos = OrangePortal.transform.position;
-            PortalRot = OrangePortal.transform.rotation;
-            ShootPortal(OrangePortal);
-        }
-
-
-
-
-
-        if(CanAttach() && Input.GetKeyDown(m_Attach))
+        //Attach
+        if (CanAttach() && Input.GetKeyDown(m_Attach))
             Attach();
 
         if (m_AttachObject != null && Input.GetKeyDown(m_Attach))
             Detach(0f);
         if (m_AttachObject != null && Input.GetMouseButtonDown(0))
             Detach(m_DetachForce);
-        
+
 
         UpdateAttachPosition();
+
+        //-------------------------------------------------------PORTALS------------------------------------------------------\\
+        //Portals
+        if (Input.GetMouseButtonDown(0) && CanAttach() && !Input.GetMouseButtonDown(1))
+        {
+            PortalPos = BluePortal.transform.position;
+            PortalRot = BluePortal.transform.rotation;
+        }
+        else if (Input.GetMouseButtonDown(1) && CanAttach() && !Input.GetMouseButtonDown(0))
+        {
+            PortalPos = OrangePortal.transform.position;
+            PortalRot = OrangePortal.transform.rotation;
+        }
+
+        //Active funct.
+        if (Input.GetMouseButton(0) && CanAttach())
+        {
+            ShootPortal(BluePortal);
+            if (Input.GetAxis("Mouse ScrollWheel") < 0f && sizeScale > localScalePortals / 2)
+            {
+                sizeScale=sizeScale-0.25f;
+                currentPortal.transform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
+            }
+            else if(Input.GetAxis("Mouse ScrollWheel") > 0f && sizeScale <= localScalePortals*2 )
+            {
+                sizeScale=sizeScale + 0.25f;
+                currentPortal.transform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
+            }
+            
+
+
+        }
+
+        else if(Input.GetMouseButton(1) && CanAttach())
+            ShootPortal(OrangePortal);
+
+//SpawnPortal
+
+        if(currentPortal != null && (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
+        {
+            if (Spawn)
+            {
+                print("cojones");
+                currentPortal.Renderer.SetActive(true);
+                currentPortal.gameObject.SetActive(true);
+            }
+            else
+            {
+                currentPortal.Renderer.SetActive(true);
+                currentPortal.gameObject.SetActive(true);
+                currentPortal.transform.position = PortalPos;
+                currentPortal.transform.rotation = PortalRot;
+            }
+        }
+        //-------------------------------------------------------END PORTALS------------------------------------------------------\\      
+        
     }
 
     private void Detach(float ForceToApply)
@@ -262,29 +306,61 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void ShootPortal( Portal PortalToSpawn)
+    public void ShootPortal(Portal PortalToSpawn)
     {
-        
+
+        currentPortal = PortalToSpawn;
+        currentPortal.gameObject.SetActive(false);
         Ray l_ray = m_Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit l_RaycastHit;
         if (Physics.Raycast(l_ray, out l_RaycastHit, 20.0f, m_ShootLayerMask.value))
         {
-            if (l_RaycastHit.collider.CompareTag("WallDrawable"))
-            {
-                PortalToSpawn.transform.position = l_RaycastHit.point;
-                PortalToSpawn.transform.rotation = Quaternion.LookRotation(l_RaycastHit.normal);
 
-                print(PortalToSpawn.IsValidPosition(l_RaycastHit.point, l_RaycastHit.normal));
-                if (PortalToSpawn.IsValidPosition(l_RaycastHit.point, l_RaycastHit.normal))
-                {
-                    PortalToSpawn.gameObject.SetActive(true);
-                }
-                else 
-                {
-                    PortalToSpawn.transform.position = PortalPos;
-                    PortalToSpawn.transform.rotation = PortalRot;
-                }
+            currentPortal.transform.position = l_RaycastHit.point;
+            currentPortal.transform.rotation = Quaternion.LookRotation(l_RaycastHit.normal);
+            nextPos = l_RaycastHit.point;
+            nextRot = l_RaycastHit.normal;
+
+            if (currentPortal.IsValidPosition(nextPos, nextRot))
+            {
+                currentPortal.gameObject.SetActive(true);
+                currentPortal.Renderer.SetActive(true);
+                Spawn = true;
             }
+            else
+                Spawn = false;
         }
     }
+
+    public void Death()
+    {
+       //ps a poner la funsiona aquo
+    }
 }
+
+
+//public void ShootPortal(Portal PortalToSpawn)
+//{
+
+//    Ray l_ray = m_Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+//    RaycastHit l_RaycastHit;
+//    if (Physics.Raycast(l_ray, out l_RaycastHit, 20.0f, m_ShootLayerMask.value))
+//    {
+//        if (l_RaycastHit.collider.CompareTag("WallDrawable"))
+//        {
+//            PortalToSpawn.transform.position = l_RaycastHit.point;
+//            PortalToSpawn.transform.rotation = Quaternion.LookRotation(l_RaycastHit.normal);
+
+//            print(PortalToSpawn.IsValidPosition(l_RaycastHit.point, l_RaycastHit.normal));
+//            if (PortalToSpawn.IsValidPosition(l_RaycastHit.point, l_RaycastHit.normal))
+//            {
+//                PortalToSpawn.gameObject.SetActive(true);
+//            }
+//            else
+//            {
+//                PortalToSpawn.transform.position = PortalPos;
+//                PortalToSpawn.transform.rotation = PortalRot;
+//            }
+//        }
+//    }
+//}
