@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    //public Transform m_DestroyObjects;
+    //public Vector3 m_InitialPosPlayer;
     static GameController m_GameController;
 
     //LevelData m_LevelData;
     PlayerController m_player;
-
+    LevelData m_LevelData;
+    HudController m_Hud;
     private void Awake()
     {
         if (m_GameController == null)
@@ -28,59 +29,39 @@ public class GameController : MonoBehaviour
     {
         m_player = fpsPlayer;
     }
+    public void SetLevelData(LevelData levelData)
+    {
+        m_LevelData = levelData;
+    }
 
+    public void SetHudController(HudController hud)
+    {
+        m_Hud = hud;
+    }
     public PlayerController GetPlayer()
     {
         return m_player;
     }
+
+    public LevelData GetLevelData() => m_LevelData;
+    public HudController GetHudController() => m_Hud;
     public void ResetLevel()
     {
-        //for (int i = 0; i < m_DestroyObjects.childCount; i++)
-        //{
-        //    Transform l_Transform = m_DestroyObjects.GetChild(i);
-        //    l_Transform.gameObject.SetActive(false);
-        //}
+        print("epa");
+        m_LevelData.ResetLastCheckPoint();
+        TeleportController.GetTeleportController().ResetTeleport();
+        m_LevelData.ResetCompanionsPos();
+        m_LevelData.ResetDoorOpened();
 
+        GetGameController().GetHudController().QuitPauseMenu();
+        GetGameController().GetHudController().DesactiveGameOver();
 
-        //m_LevelData.ResetLastCheckPoint();
-        //m_LevelData.ResetDecansLevel();
-        //TeleportController.GetTeleportController().ResetTeleport();
-        //HudController.GetHudController().QuitPauseMenu();
-        //HudController.GetHudController().DesactiveGameOver();
-
-        //ResetStats();
-        //if (Gate != null)
-        //    Gate.ResetGate();
-        //if (m_LevelData.m_DoorKey != null)
-        //    m_LevelData.m_DoorKey.ResetKeyDoor();
+        ResetStats();
     }
 
-    //public void ResetStats()
-    //{
-    //    m_player.ResetPlayerPos();
-    //    m_player.GetComponent<Shoot>().ResetsShootStates();
-    //    m_player.GetComponent<HealthSystemPlayer>().ResetStates();
-    //}
-  
+    public void ResetStats()
+    {
+        m_player.ResetPlayer();
+    }
 
-
-    //public void SetLevelata(LevelData _levelData)
-    //{
-    //    m_LevelData = _levelData;
-    //}
-    //public LevelData GetLevelData()
-    //{
-    //    return m_LevelData;
-    //}
-
-    
-
-    //public void CheckPointPlayerStats(float cLife, float cShield, int cBullet, int cBulletHold)
-    //{
-    //    m_player.GetComponent<HealthSystemPlayer>().m_ShieldLifeTime = cShield;
-    //    m_player.GetComponent<HealthSystemPlayer>().currentLife = cLife;
-    //    m_player.GetComponent<Shoot>().UpdateTextUI(cBullet, cBulletHold, m_player.GetComponent<Shoot>().CurrentValues.BulletForCharger);
-    //    m_player.GetComponent<Shoot>().CurrentValues.CurrentBulletHold = cBulletHold;
-    //    m_player.GetComponent<Shoot>().CurrentValues.CurrentBullets = cBullet;
-    //}
 }

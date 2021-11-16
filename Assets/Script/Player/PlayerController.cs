@@ -15,9 +15,10 @@ public class PlayerController : MonoBehaviour, IDeath
     public bool m_InvertedYaw = true;
     public bool m_InvertedPitch = true;
     public LayerMask m_ShootLayerMask;
+    public Transform m_InitialPosPlayer;
 
     public Camera m_Camera;
-    private CharacterController m_CharacterController;
+    public CharacterController m_CharacterController;
 
     public float m_Speed = 10.0f;
     public float m_FastSpeedMultiplier = 3f;
@@ -117,10 +118,7 @@ public class PlayerController : MonoBehaviour, IDeath
             ShootPortal(OrangePortal);
             ReSizing();
         }
-            
-
-       
-
+           
         //SpawnPortal
 
         if (currentPortal != null && (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
@@ -162,7 +160,7 @@ public class PlayerController : MonoBehaviour, IDeath
             Rigidbody l_Rigid = m_AttachObject.GetComponent<Rigidbody>();
             l_Rigid.isKinematic = false;
             l_Rigid.AddForce(m_Camera.transform.forward * ForceToApply);
-            if(m_AttachObject is Companion)
+            if(m_AttachObject.GetComponent<Companion>())
             {
                 Companion l_Companion = m_AttachObject.GetComponent<Companion>();
                 l_Companion.SetTelportActive(true);
@@ -252,10 +250,13 @@ public class PlayerController : MonoBehaviour, IDeath
         {
             m_AttachObject = AttachObject;
             m_AttachObject.GetComponent<Rigidbody>().isKinematic = true;
-            if(m_AttachObject is Companion)
+            if(m_AttachObject.GetComponent<Companion>())
             {
+                
                 Companion l_Companion = m_AttachObject.GetComponent<Companion>();
                 l_Companion.SetTelportActive(false);
+
+                GameController.GetGameController().GetLevelData().CompanionAttached(l_Companion);
             }
             m_CurrentAttachObjectTime = 0;
         }
@@ -350,7 +351,14 @@ public class PlayerController : MonoBehaviour, IDeath
 
     public void Death()
     {
-       //ps a poner la funsiona aquo
+        GameController.GetGameController().GetHudController().GameOverAction();
+    }
+
+    public void ResetPlayer()
+    {
+        m_CharacterController.enabled = false;
+        GameController.GetGameController().GetPlayer().transform.position = m_InitialPosPlayer.position;
+        m_CharacterController.enabled = true;
     }
 }
 

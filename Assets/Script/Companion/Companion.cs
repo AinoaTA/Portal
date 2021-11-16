@@ -8,9 +8,12 @@ public class Companion : MonoBehaviour
     bool m_TeleporteActive = true;
     Rigidbody rb;
     public float m_DotToEnterPortal = 0.5f;
+    public Vector3 InitialPos;
+    public Quaternion InitialRot;
     void Start()
     {
-        
+        InitialPos = transform.position;
+        InitialRot = transform.rotation;
     }
 
     private void Awake()
@@ -62,4 +65,10 @@ public class Companion : MonoBehaviour
         if (other.CompareTag("Portal"))
             Teleport(other.GetComponent<Portal>());
     }
+
+    public void ResetCompanion()
+    {
+        transform.position= InitialPos;
+        transform.rotation=InitialRot;
+     }
 }

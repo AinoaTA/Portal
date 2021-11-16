@@ -7,6 +7,7 @@ public class Spawner : MonoBehaviour
     public GameObject Companion;
     public void ToSpawn()
     {
-        Instantiate(Companion, transform.position, Quaternion.identity);
+         GameObject a = Instantiate(Companion, transform.position, Quaternion.identity);
+        GameController.GetGameController().GetLevelData().m_CompanionsSpawned.Add(a.GetComponent<Companion>());
     }
 }
