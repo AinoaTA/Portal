@@ -40,8 +40,10 @@ public class Companion : MonoBehaviour
             l_VelocityXZ.Normalize();
             float l_Dot = Vector3.Dot(l_PortalZX, -l_VelocityXZ);
 
+            print(l_Dot + "y " + m_DotToEnterPortal);
             if (l_Dot > m_DotToEnterPortal)
             {
+                print("cojones");
                 Vector3 l_Velocity = PortalToTeleported.m_OtherPortalTransform.transform.InverseTransformDirection(rb.velocity);
                 rb.isKinematic = true;
                 Vector3 l_LocalPos = PortalToTeleported.transform.InverseTransformPoint(transform.position);

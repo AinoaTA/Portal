@@ -15,7 +15,6 @@ public class LaserController : MonoBehaviour
         float l_Distance = m_LaserMax;
         if (Physics.Raycast(l_Ray, out RaycastHit l_RayCastHit, m_LaserMax, m_LayerMask.value))
         {
-            print(l_RayCastHit.collider.tag);
             if (l_RayCastHit.collider.CompareTag("Turret") || l_RayCastHit.collider.CompareTag("Player"))
             {
                 print("Adeath");
@@ -26,6 +25,10 @@ public class LaserController : MonoBehaviour
             if (l_RayCastHit.collider.CompareTag("RefractionCube"))
                 l_RayCastHit.collider.GetComponent<RefractionCube>().ShootLaser();
 
+            if(l_RayCastHit.collider.GetComponent<ButtonEvent>())
+            {
+                l_RayCastHit.collider.GetComponent<ButtonEvent>().m_Event?.Invoke();
+            }
            
         }
         m_LineRenderer.SetPosition(1, new Vector3(0f, 0f, l_Distance));

@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 6025938326212162463}
   - component: {fileID: 6012266580537342351}
   - component: {fileID: 6000537599393352509}
-  - component: {fileID: 6030309493183123857}
+  - component: {fileID: 1364711630570890840}
   m_Layer: 0
   m_Name: Companion
   m_TagString: Companion
@@ -175,7 +175,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.06, y: 1.06, z: 1.06}
   m_Center: {x: 0, y: 0.6, z: 0}
---- !u!114 &6030309493183123857
+--- !u!114 &1364711630570890840
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

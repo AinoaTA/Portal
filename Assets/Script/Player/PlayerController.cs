@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour, IDeath
     public float m_DotToEnterPortal = 0.5f;
 
     private GameObject m_AttachObject = null;
+    public bool m_ThrewCompanion = false; //variable para cuando soltamos el cubo (se veía afectado[el evento del botón] por el canattachdelay)
     public Transform m_AttachPosition;
     public float m_AttachObjectTime = 1f;
     private float m_CurrentAttachObjectTime = 0f;
@@ -60,6 +61,7 @@ public class PlayerController : MonoBehaviour, IDeath
     private bool Spawn=false;
     private float sizeScale;
     private float localScalePortals = 1;
+
     void Awake()
     {
         m_Yaw = transform.rotation.eulerAngles.y;
@@ -79,8 +81,7 @@ public class PlayerController : MonoBehaviour, IDeath
         //Attach
         if (CanAttach() && Input.GetKeyDown(m_Attach))
             Attach();
-
-        if (m_AttachObject != null && Input.GetKeyDown(m_Attach))
+        if (m_AttachObject != null && Input.GetMouseButtonDown(1))
             Detach(0f);
         if (m_AttachObject != null && Input.GetMouseButtonDown(0))
             Detach(m_DetachForce);
@@ -90,46 +91,40 @@ public class PlayerController : MonoBehaviour, IDeath
 
         //-------------------------------------------------------PORTALS------------------------------------------------------\\
         //Portals
-        if (Input.GetMouseButtonDown(0) && CanAttach() && !Input.GetMouseButtonDown(1))
+        if (CanAttach() && Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1))
         {
             PortalPos = BluePortal.transform.position;
             PortalRot = BluePortal.transform.rotation;
         }
-        else if (Input.GetMouseButtonDown(1) && CanAttach() && !Input.GetMouseButtonDown(0))
+        else if (CanAttach() && Input.GetMouseButtonDown(1) && !Input.GetMouseButtonDown(0))
         {
             PortalPos = OrangePortal.transform.position;
             PortalRot = OrangePortal.transform.rotation;
         }
 
         //Active funct.
-        if (Input.GetMouseButton(0) && CanAttach())
+        if (CanAttach() && Input.GetMouseButton(0))
         {
             ShootPortal(BluePortal);
-            if (Input.GetAxis("Mouse ScrollWheel") < 0f && sizeScale > localScalePortals / 2)
-            {
-                sizeScale=sizeScale-0.25f;
-                currentPortal.transform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
-            }
-            else if(Input.GetAxis("Mouse ScrollWheel") > 0f && sizeScale <= localScalePortals*2 )
-            {
-                sizeScale=sizeScale + 0.25f;
-                currentPortal.transform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
-            }
-            
-
+            ReSizing();
 
         }
 
-        else if(Input.GetMouseButton(1) && CanAttach())
+        else if (CanAttach() && Input.GetMouseButton(1))
+        {
             ShootPortal(OrangePortal);
+            ReSizing();
+        }
+            
 
-//SpawnPortal
+       
 
-        if(currentPortal != null && (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
+        //SpawnPortal
+
+        if (currentPortal != null && (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
         {
             if (Spawn)
             {
-                print("cojones");
                 currentPortal.Renderer.SetActive(true);
                 currentPortal.gameObject.SetActive(true);
             }
@@ -143,6 +138,19 @@ public class PlayerController : MonoBehaviour, IDeath
         }
         //-------------------------------------------------------END PORTALS------------------------------------------------------\\      
         
+    }
+    private void ReSizing()
+    {
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f && sizeScale > localScalePortals / 2)
+        {
+            sizeScale = sizeScale - 0.25f;
+            currentPortal.transform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") > 0f && sizeScale <= localScalePortals * 2)
+        {
+            sizeScale = sizeScale + 0.25f;
+            currentPortal.transform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
+        }
     }
 
     private void Detach(float ForceToApply)
@@ -158,7 +166,8 @@ public class PlayerController : MonoBehaviour, IDeath
                 l_Companion.SetTelportActive(true);
             }
             m_AttachObject.transform.SetParent(null);
-            m_AttachObject = null;
+            m_ThrewCompanion = true;
+            StartCoroutine(DelayCanAttach());
         }
     }
     private void PlayerCamera()
@@ -216,9 +225,7 @@ public class PlayerController : MonoBehaviour, IDeath
             m_AttachObject.transform.rotation = Quaternion.Lerp(m_AttachObject.transform.rotation, m_AttachPosition.rotation, m_CurrentAttachObjectTime / m_AttachObjectTime);
 
             if (l_Pct == 1.0f)
-            {
                 m_AttachObject.transform.SetParent(m_AttachPosition);
-            }
         }
     }
 
@@ -226,13 +233,15 @@ public class PlayerController : MonoBehaviour, IDeath
     {
         Ray l_ray = m_Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit l_RaycastHit;
-        if (Physics.Raycast(l_ray, out l_RaycastHit, 20.0f, m_ShootLayerMask.value))
+        if (Physics.Raycast(l_ray, out l_RaycastHit, 15.0f, m_ShootLayerMask.value))
         {
-            print("a");
-            if (l_RaycastHit.collider.CompareTag("Companion") || l_RaycastHit.collider.CompareTag("Turret"))
+            
+            if (l_RaycastHit.collider.CompareTag("Companion") || l_RaycastHit.collider.CompareTag("Turret") || l_RaycastHit.collider.CompareTag("RefractionCube"))
             {
                 StartAttachObject(l_RaycastHit.collider.gameObject);
+                m_ThrewCompanion = false;
             }
+                
         }
     }
     void StartAttachObject(GameObject AttachObject)
@@ -246,14 +255,18 @@ public class PlayerController : MonoBehaviour, IDeath
                 Companion l_Companion = m_AttachObject.GetComponent<Companion>();
                 l_Companion.SetTelportActive(false);
             }
-            
             m_CurrentAttachObjectTime = 0;
-
         }
     }
+
     public bool CanAttach()
+    { 
+       return m_AttachObject==null;
+    }
+    private IEnumerator DelayCanAttach()
     {
-        return m_AttachObject==null;
+        yield return new WaitForSeconds(0.2f);
+        m_AttachObject = null;
     }
 
     private void Gravity(Vector3 movement)
@@ -281,6 +294,7 @@ public class PlayerController : MonoBehaviour, IDeath
     {
         if (other.CompareTag("Portal"))
             Teleport(other.GetComponent<Portal>());
+
     }
 
     public void Teleport(Portal PortalToTeleport)
@@ -339,28 +353,3 @@ public class PlayerController : MonoBehaviour, IDeath
 }
 
 
-//public void ShootPortal(Portal PortalToSpawn)
-//{
-
-//    Ray l_ray = m_Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-//    RaycastHit l_RaycastHit;
-//    if (Physics.Raycast(l_ray, out l_RaycastHit, 20.0f, m_ShootLayerMask.value))
-//    {
-//        if (l_RaycastHit.collider.CompareTag("WallDrawable"))
-//        {
-//            PortalToSpawn.transform.position = l_RaycastHit.point;
-//            PortalToSpawn.transform.rotation = Quaternion.LookRotation(l_RaycastHit.normal);
-
-//            print(PortalToSpawn.IsValidPosition(l_RaycastHit.point, l_RaycastHit.normal));
-//            if (PortalToSpawn.IsValidPosition(l_RaycastHit.point, l_RaycastHit.normal))
-//            {
-//                PortalToSpawn.gameObject.SetActive(true);
-//            }
-//            else
-//            {
-//                PortalToSpawn.transform.position = PortalPos;
-//                PortalToSpawn.transform.rotation = PortalRot;
-//            }
-//        }
-//    }
-//}

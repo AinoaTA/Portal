@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9111227591623711373}
   m_Layer: 0
   m_Name: ValidPoints
-  m_TagString: Untagged
+  m_TagString: Portal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 4297256385686166261}
   m_Layer: 0
   m_Name: Renderer
-  m_TagString: Untagged
+  m_TagString: Portal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -215,7 +215,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 192eab954f25a8e4ca8d49ff2084eac1, type: 2}
+  - {fileID: 2100000, guid: 3ffbdc7d7f2ed0447845429b221cb117, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -286,13 +286,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f79bc99dc09c5478ef269718034070, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PortalType: 0
+  m_PortalType: 1
   m_Camera: {fileID: 4297256386054418658}
   m_OtherPortalTransform: {fileID: 6180500114369301356}
   m_OtherPortal: {fileID: 0}
   m_NearOffset: 0.3
   m_Player: {fileID: 0}
-  ValidPoints: []
+  ValidPoints:
+  - {fileID: 405702388482995994}
+  - {fileID: 8694654778785300720}
+  - {fileID: 6447423216622389861}
+  - {fileID: 3471872756625230580}
+  - {fileID: 8570120623058717734}
+  - {fileID: 1850433410737761446}
   m_Distance: 200
   m_ValidDot: 0.99
   m_MaxValidDistance: 0.1
@@ -325,7 +331,7 @@ GameObject:
   - component: {fileID: 4297256386054418658}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: Portal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -354,7 +360,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -377,7 +383,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: 8f5198d7069d2a74a9f85ac0cc8e6a7b, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: feb2ed0992237f141be891dfba664c87, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -400,7 +406,7 @@ GameObject:
   - component: {fileID: 4297256386745246071}
   m_Layer: 0
   m_Name: Frame
-  m_TagString: Untagged
+  m_TagString: Portal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -446,7 +452,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 282540a9d9ec307449c74513c5688f2d, type: 2}
+  - {fileID: 2100000, guid: 907c78eee0306984e9e4d840aff0f2fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -479,7 +485,7 @@ GameObject:
   - component: {fileID: 6180500114369301356}
   m_Layer: 0
   m_Name: OtherPortalTransform
-  m_TagString: Untagged
+  m_TagString: Portal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
