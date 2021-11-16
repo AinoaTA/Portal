@@ -62,6 +62,8 @@ public class PlayerController : MonoBehaviour, IDeath
     private float sizeScale;
     private float localScalePortals = 1;
 
+    public AudioSource PortalShoot;
+
     void Awake()
     {
         m_Yaw = transform.rotation.eulerAngles.y;
@@ -329,7 +331,7 @@ public class PlayerController : MonoBehaviour, IDeath
         RaycastHit l_RaycastHit;
         if (Physics.Raycast(l_ray, out l_RaycastHit, 20.0f, m_ShootLayerMask.value))
         {
-
+            PortalShoot.Play();
             currentPortal.transform.position = l_RaycastHit.point;
             currentPortal.transform.rotation = Quaternion.LookRotation(l_RaycastHit.normal);
             nextPos = l_RaycastHit.point;
