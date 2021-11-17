@@ -256,7 +256,7 @@ public class PlayerController : MonoBehaviour, IDeath
                 Companion l_Companion = m_AttachObject.GetComponent<Companion>();
                 l_Companion.SetTelportActive(false);
 
-                GameController.GetGameController().GetLevelData().CompanionAttached(l_Companion);
+             
             }
             m_CurrentAttachObjectTime = 0;
         }

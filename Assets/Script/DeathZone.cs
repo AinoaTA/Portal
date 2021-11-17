@@ -8,6 +8,5 @@ public class DeathZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
             other.GetComponent<IDeath>().Death();
-        
     }
 }

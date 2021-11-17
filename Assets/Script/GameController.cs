@@ -47,7 +47,6 @@ public class GameController : MonoBehaviour
     public HudController GetHudController() => m_Hud;
     public void ResetLevel()
     {
-        print("epa");
         m_LevelData.ResetLastCheckPoint();
         TeleportController.GetTeleportController().ResetTeleport();
         m_LevelData.ResetCompanionsPos();
@@ -56,6 +55,8 @@ public class GameController : MonoBehaviour
         GetGameController().GetHudController().QuitPauseMenu();
         GetGameController().GetHudController().DesactiveGameOver();
 
+        GetGameController().GetPlayer().BluePortal.ResetPortal();
+        GetGameController().GetPlayer().OrangePortal.ResetPortal();
         ResetStats();
     }
 

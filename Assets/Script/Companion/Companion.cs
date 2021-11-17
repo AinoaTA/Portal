@@ -10,6 +10,8 @@ public class Companion : MonoBehaviour
     public float m_DotToEnterPortal = 0.5f;
     public Vector3 InitialPos;
     public Quaternion InitialRot;
+
+    public Transform Parent;
     void Start()
     {
         InitialPos = transform.position;

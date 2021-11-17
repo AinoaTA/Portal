@@ -71,4 +71,9 @@ public class Portal : MonoBehaviour
         }
         return true;
     }
+
+    public void ResetPortal()
+    {
+        gameObject.SetActive(false);
+    }
 }

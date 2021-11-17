@@ -6,6 +6,13 @@ public class RefractionCube : LaserController
 {
     public bool m_IsRefracting=false;
 
+    public Vector3 InitialPos;
+    public Quaternion InitialRot;
+    void Start()
+    {
+        InitialPos = transform.position;
+        InitialRot = transform.rotation;
+    }
     public override void ShootLaser()
     {
         if (m_IsRefracting)
@@ -20,5 +27,11 @@ public class RefractionCube : LaserController
     {
         m_IsRefracting = false;
         m_LineRenderer.gameObject.SetActive(false);
+    }
+
+    public void ResetRefractions()
+    {
+        transform.position = InitialPos;
+        transform.rotation = InitialRot;
     }
 }
