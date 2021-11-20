@@ -54,9 +54,12 @@ public class GameController : MonoBehaviour
 
         GetGameController().GetHudController().QuitPauseMenu();
         GetGameController().GetHudController().DesactiveGameOver();
+        GetGameController().GetHudController().DesactiveWinnerLevel();
 
         GetGameController().GetPlayer().BluePortal.ResetPortal();
         GetGameController().GetPlayer().OrangePortal.ResetPortal();
+
+        GetGameController().GetPlayer().Detach(0);
         ResetStats();
     }
 

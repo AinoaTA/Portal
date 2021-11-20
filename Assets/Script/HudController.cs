@@ -6,7 +6,9 @@ public class HudController : MonoBehaviour
 {
     public GameObject m_GameOver;
     public GameObject Pause;
+    public GameObject Winner;
 
+    public AudioSource Buttons;
     private void Start()
     {
         GameController.GetGameController().SetHudController(this);
@@ -32,12 +34,32 @@ public class HudController : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    public void WinnerAction()
+    {
+        StartCoroutine(WinnerActionDelay());
+    }
+    public IEnumerator WinnerActionDelay()
+    {
+        yield return new WaitForSeconds(3f);
+        UnLockCursor();
+        Winner.SetActive(true);
+        Time.timeScale = 0;
+    }
+
     public void DesactiveGameOver()
     {
         LockCursor();
         m_GameOver.SetActive(false);
+        Winner.SetActive(false);
         Time.timeScale = 1;
 
+    }
+
+    public void DesactiveWinnerLevel()
+    {
+        LockCursor();
+        Winner.SetActive(false);
+        Time.timeScale = 1;
     }
 
     void Update()
@@ -55,6 +77,7 @@ public class HudController : MonoBehaviour
     {
         LockCursor();
         Pause.SetActive(false);
+        Winner.SetActive(false);
         Time.timeScale = 1;
     }
 

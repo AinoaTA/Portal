@@ -17,13 +17,6 @@ public class TeleportController : MonoBehaviour
         return m_TeleportController;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            ButtonLastCheckPoint();
-        }
-    }
     public Vector3 SpawnToLastTeleport()
     {
         

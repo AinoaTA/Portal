@@ -7,7 +7,6 @@ public class Turret : LaserController, IDeath
     public float m_DotAlife = 0.7f;
     private Vector2 InitialPos;
     private Quaternion InitialRot;
-    public Transform Parent;
 
 
     void Start()
@@ -19,7 +18,6 @@ public class Turret : LaserController, IDeath
     public void Death()
     {
         GameController.GetGameController().GetLevelData().m_TurretDestroyed.Add(this);
-        transform.SetParent(Parent);
         StartCoroutine(DelayDeath());
     }
 

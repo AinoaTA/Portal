@@ -10,6 +10,7 @@ TagManager:
   - Companion
   - RefractionCube
   - Turret
+  - PressLaser
   layers:
   - Default
   - TransparentFX

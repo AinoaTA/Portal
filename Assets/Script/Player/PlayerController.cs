@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour, IDeath
     public KeyCode m_DebugLockAngleKeyCode = KeyCode.I;
     public KeyCode m_DebugLockKeyCode = KeyCode.O;
 
-    public KeyCode m_Attach = KeyCode.E;
+    private KeyCode m_Attach = KeyCode.Mouse0;
 
 
     private float touchingGroundValue = 0.5f;
@@ -82,13 +82,15 @@ public class PlayerController : MonoBehaviour, IDeath
         PlayerCamera();
         PlayerMovement();
         //Attach
-        if (CanAttach() && Input.GetKeyDown(m_Attach))
-            Attach();
         if (m_AttachObject != null && Input.GetMouseButtonDown(1))
             Detach(0f);
         if (m_AttachObject != null && Input.GetMouseButtonDown(0))
             Detach(m_DetachForce);
 
+
+        if (CanAttach() && Input.GetKeyDown(m_Attach))
+            Attach();
+      
 
         UpdateAttachPosition();
 
@@ -153,22 +155,26 @@ public class PlayerController : MonoBehaviour, IDeath
         }
     }
 
-    private void Detach(float ForceToApply)
+    public void Detach(float ForceToApply)
     {
-        if (m_CurrentAttachObjectTime >= m_AttachObjectTime)
+        if (m_AttachObject != null)
         {
-            Rigidbody l_Rigid = m_AttachObject.GetComponent<Rigidbody>();
-            l_Rigid.isKinematic = false;
-            l_Rigid.AddForce(m_Camera.transform.forward * ForceToApply);
-            if(m_AttachObject.GetComponent<Companion>())
+            if (m_CurrentAttachObjectTime >= m_AttachObjectTime)
             {
-                Companion l_Companion = m_AttachObject.GetComponent<Companion>();
-                l_Companion.SetTelportActive(true);
+                Rigidbody l_Rigid = m_AttachObject.GetComponent<Rigidbody>();
+                l_Rigid.isKinematic = false;
+                l_Rigid.AddForce(m_Camera.transform.forward * ForceToApply);
+                if (m_AttachObject.GetComponent<Companion>())
+                {
+                    Companion l_Companion = m_AttachObject.GetComponent<Companion>();
+                    l_Companion.SetTelportActive(true);
+                }
+                m_AttachObject.transform.SetParent(null);
+                m_ThrewCompanion = true;
+                StartCoroutine(DelayCanAttach());
             }
-            m_AttachObject.transform.SetParent(null);
-            m_ThrewCompanion = true;
-            StartCoroutine(DelayCanAttach());
         }
+       
     }
     private void PlayerCamera()
     {

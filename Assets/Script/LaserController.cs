@@ -29,7 +29,7 @@ public class LaserController : MonoBehaviour
             if (l_RayCastHit.collider.CompareTag("RefractionCube"))
                 l_RayCastHit.collider.GetComponent<RefractionCube>().ShootLaser();
 
-            if(l_RayCastHit.collider.GetComponent<ButtonEvent>())
+            if(l_RayCastHit.collider.CompareTag("PressLaser"))
                 l_RayCastHit.collider.GetComponent<ButtonEvent>().m_Event?.Invoke();
             
            
